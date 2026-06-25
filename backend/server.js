@@ -6,6 +6,7 @@ import mysql from "mysql2/promise";
 dotenv.config();
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -18,34 +19,39 @@ const db = await mysql.createPool({
   connectionLimit: 10
 });
 
-
+// Database Connection Check
 try {
   const connection = await db.getConnection();
-  console.log(" MySQL connected successfully");
+  console.log("MySQL connected successfully");
   connection.release();
 } catch (err) {
-  console.error("❌ MySQL connection error:");
+  console.error("MySQL connection error:");
   console.error(err);
 }
 
+// Home Route
 app.get("/", (req, res) => {
   res.send("API running");
 });
 
+// Get All Students
 app.get("/api/students", async (req, res) => {
   try {
     const [rows] = await db.query(
       "SELECT * FROM students ORDER BY id DESC"
     );
+
     res.json(rows);
   } catch (error) {
     console.log(error);
+
     res.status(500).json({
       error: error.message
     });
   }
 });
 
+// Add Student
 app.post("/api/students", async (req, res) => {
   try {
     const {
@@ -77,36 +83,21 @@ app.post("/api/students", async (req, res) => {
     );
 
     res.status(201).json({
-      message: "Student Registered Successfully "
+      message: "Student Registered Successfully"
     });
 
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       message: error.message
     });
   }
 });
 
-app.delete("/api/students/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    await db.query(
-      "DELETE FROM students WHERE id = ?",
-      [id]
-    );
-
-    res.json({
-      message: "🗑 Student Deleted Successfully"
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
-  }
-});
-
+// Server Start
 app.listen(process.env.PORT || 5000, () => {
-  console.log(`Server running on port ${process.env.PORT || 5000}`);
+  console.log(
+    `Server running on port ${process.env.PORT || 5000}`
+  );
 });
