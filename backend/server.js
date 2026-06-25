@@ -19,7 +19,7 @@ const db = await mysql.createPool({
   connectionLimit: 10
 });
 
-// Database Connection Check
+
 try {
   const connection = await db.getConnection();
   console.log("MySQL connected successfully");
@@ -29,12 +29,11 @@ try {
   console.error(err);
 }
 
-// Home Route
+
 app.get("/", (req, res) => {
   res.send("API running");
 });
 
-// Get All Students
 app.get("/api/students", async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -51,7 +50,6 @@ app.get("/api/students", async (req, res) => {
   }
 });
 
-// Add Student
 app.post("/api/students", async (req, res) => {
   try {
     const {
@@ -62,7 +60,7 @@ app.post("/api/students", async (req, res) => {
       branch
     } = req.body;
 
-    // Validation
+    
     if (
       !name ||
       !enrollmentNumber ||
@@ -95,7 +93,7 @@ app.post("/api/students", async (req, res) => {
   }
 });
 
-// Server Start
+
 app.listen(process.env.PORT || 5000, () => {
   console.log(
     `Server running on port ${process.env.PORT || 5000}`
